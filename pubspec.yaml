@@ -1,0 +1,17 @@
+name: tiktoklikescroller
+description: A vertical fullscreen scroll implementation that snaps in place, similar to the TikTok app
+version: 0.1.0
+homepage: https://github.com/dmt195
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
