@@ -2,7 +2,9 @@
 
 A vertical fullscreen scroll implementation that snaps in place, similar to the TikTok app.
 
+## Demo
 
+![Example at work](v0.1.0.gif)
 
 ## Usage
 
