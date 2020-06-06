@@ -27,6 +27,8 @@ class MyApp extends StatelessWidget {
           // ^ the fraction of the screen needed to scroll
           swipeVelocityThreshold: 2000,
           // ^ the velocity threshold for smaller scrolls
+          animationDuration: const Duration(milliseconds: 300),
+          // ^ how long the animation will take
           builder: (BuildContext context, int index) {
             return Container(
                 color: colors[index],

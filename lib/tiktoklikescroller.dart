@@ -3,16 +3,19 @@ library tiktoklikescroller;
 import 'package:flutter/widgets.dart';
 
 class TikTokStyleFullPageScroller extends StatefulWidget {
-  const TikTokStyleFullPageScroller(
-      {@required this.contentSize,
-      @required this.builder,
-      this.swipeThreshold = 0.20,
-      this.swipeVelocityThreshold = 1000});
+  const TikTokStyleFullPageScroller({
+    @required this.contentSize,
+    @required this.builder,
+    this.swipeThreshold = 0.20,
+    this.swipeVelocityThreshold = 1000,
+    this.animationDuration = const Duration(milliseconds: 300),
+  });
 
   final int contentSize;
   final IndexedWidgetBuilder builder;
   final double swipeThreshold;
   final double swipeVelocityThreshold;
+  final Duration animationDuration;
 
   @override
   _TikTokStyleFullPageScrollerState createState() =>
@@ -36,9 +39,7 @@ class _TikTokStyleFullPageScrollerState
     _dragStartPosition = 0;
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(
-        milliseconds: 200,
-      ),
+      duration: widget.animationDuration,
     );
     _cardIndex = 0;
     _dragState = DragState.idle;
@@ -106,8 +107,8 @@ class _TikTokStyleFullPageScrollerState
           Positioned(
             top: _screenSize.height + _cardOffset,
             child: SizedBox.fromSize(
-                size: _screenSize,
-                child: widget.builder(context, _cardIndex + 1),
+              size: _screenSize,
+              child: widget.builder(context, _cardIndex + 1),
             ),
           ),
       ],

@@ -1,6 +1,10 @@
-## [0.0.1] - 05 June 2020
+## [0.1.1] - 06 June 2020
 
-* Initial release
+* Added a duration parameter for customising the speediness
+
+## [0.1.0] - 06 June 2020
+
+* Provided a better example and now include a animated GIF
 
 ## [0.0.2] - 05 June 2020
 
@@ -8,6 +12,7 @@
 * Wrapped widget builders with SizedBox to expand them
 * Fixed readmes
 
-## [0.1.0] - 06 June 2020
+## [0.0.1] - 05 June 2020
 
-* Provided a better example and now include a animated GIF
+* Initial release
+
