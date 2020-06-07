@@ -17,7 +17,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final List<Color> colors = <Color>[Colors.red, Colors.blue, Colors.yellow];
+    final List<Color> colors = <Color>[Colors.red, Colors.blue, Colors.green];
 
     return MaterialApp(
       home: Scaffold(
