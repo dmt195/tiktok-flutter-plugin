@@ -1,3 +1,5 @@
+![Test](https://github.com/dmt195/tiktok-flutter-plugin/workflows/Test/badge.svg?branch=master)
+
 # tiktoklikescroller
 
 A vertical fullscreen scroll implementation that snaps in place, similar to the TikTok app.
