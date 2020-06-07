@@ -18,12 +18,13 @@ jobs:
         with:
           flutter-version: '1.18.0-11.1.pre'
           channel: 'beta'
-      - working-directory: example
       - run: flutter pub get
       # run static analys code
       - run: flutter  analyze
+        working-directory: example
       # run  flutter widgets tests  and unit tests
       - run: flutter test --coverage
+        working-directory: example
       # Upload coverage reports to Codecov
       # https://github.com/marketplace/actions/codecov
       - name: Upload coverage to Codecov
