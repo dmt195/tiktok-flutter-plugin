@@ -31,7 +31,7 @@ class HomeWidget extends StatelessWidget {
     return Scaffold(
       body: TikTokStyleFullPageScroller(
         contentSize: colors.length,
-        swipeThreshold: 0.2,
+        swipePositionThreshold: 0.2,
         // ^ the fraction of the screen needed to scroll
         swipeVelocityThreshold: 2000,
         // ^ the velocity threshold for smaller scrolls

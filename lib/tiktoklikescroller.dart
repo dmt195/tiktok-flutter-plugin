@@ -2,18 +2,34 @@ library tiktoklikescroller;
 
 import 'package:flutter/widgets.dart';
 
+/*
+The main and only entrypoint
+
+Treat [TikTokStyleFullPageScroller] as you would ListView.Builder()
+Pass in the
+* [contentSize], the number of elements in the list, 
+* [swipePositionThreshold], which is the fraction of the screen that needs be 
+scrolled before it will animate to the next (otherwise it will animate back to 
+the current card's resting position). 
+* [swipVelocityThreshold] will override the position threshold if the card is 
+flicked a small distance but quickly.
+* [animationDuration] is the time the card will take to animate between cards.
+* [builder] is a function that converts a context and an index to a Widget to be
+shown.
+
+*/
 class TikTokStyleFullPageScroller extends StatefulWidget {
   const TikTokStyleFullPageScroller({
     @required this.contentSize,
     @required this.builder,
-    this.swipeThreshold = 0.20,
+    this.swipePositionThreshold = 0.20,
     this.swipeVelocityThreshold = 1000,
     this.animationDuration = const Duration(milliseconds: 300),
   });
 
   final int contentSize;
   final IndexedWidgetBuilder builder;
-  final double swipeThreshold;
+  final double swipePositionThreshold;
   final double swipeVelocityThreshold;
   final Duration animationDuration;
 
@@ -76,28 +92,29 @@ class _TikTokStyleFullPageScrollerState
               });
             },
             onVerticalDragEnd: (DragEndDetails details) {
-              DragState state;
+              DragState _state;
               // If the length of scroll goes beyond the point of no return
               // or if a small flick was faster than the velocity threshold
-              if ((_cardOffset < -_screenSize.height * widget.swipeThreshold ||
+              if ((_cardOffset <
+                          -_screenSize.height * widget.swipePositionThreshold ||
                       details.primaryVelocity <
                           -widget.swipeVelocityThreshold) &&
                   _cardIndex < widget.contentSize - 1) {
                 // build animation, set state to animate forward
                 // Animate to next card
-                state = DragState.animatingForward;
+                _state = DragState.animatingForward;
               } else if ((_cardOffset >
-                          _screenSize.height / widget.swipeThreshold ||
+                          _screenSize.height / widget.swipePositionThreshold ||
                       details.primaryVelocity >
                           widget.swipeVelocityThreshold) &&
                   _cardIndex > 0) {
                 // Animate to previous card
-                state = DragState.animatingBackward;
+                _state = DragState.animatingBackward;
               } else {
-                state = DragState.animatingToCancel;
+                _state = DragState.animatingToCancel;
               }
               setState(() {
-                _dragState = state;
+                _dragState = _state;
               });
               _createAnimation();
             },
@@ -116,34 +133,34 @@ class _TikTokStyleFullPageScrollerState
   }
 
   void _createAnimation() {
-    double end;
+    double _end;
     switch (_dragState) {
       case DragState.animatingForward:
-        end = -_screenSize.height;
+        _end = -_screenSize.height;
         break;
       case DragState.animatingBackward:
-        end = _screenSize.height;
+        _end = _screenSize.height;
         break;
       case DragState.animatingToCancel:
       default:
-        end = 0;
+        _end = 0;
     }
-    _animation = Tween<double>(begin: _cardOffset, end: end)
+    _animation = Tween<double>(begin: _cardOffset, end: _end)
         .animate(_animationController)
           ..addListener(_animationListener)
-          ..addStatusListener((AnimationStatus status) {
-            switch (status) {
+          ..addStatusListener((AnimationStatus _status) {
+            switch (_status) {
               case AnimationStatus.completed:
                 // change the card index if required,
                 // change the offset back to zero,
                 // change the drag state back to idle
-                int newCardIndex = _cardIndex;
+                int _newCardIndex = _cardIndex;
                 switch (_dragState) {
                   case DragState.animatingForward:
-                    newCardIndex++;
+                    _newCardIndex++;
                     break;
                   case DragState.animatingBackward:
-                    newCardIndex--;
+                    _newCardIndex--;
                     break;
                   case DragState.animatingToCancel:
                     //no change to card index
@@ -151,10 +168,10 @@ class _TikTokStyleFullPageScrollerState
                   default:
                 }
 
-                if (status != AnimationStatus.dismissed &&
-                    status != AnimationStatus.forward) {
+                if (_status != AnimationStatus.dismissed &&
+                    _status != AnimationStatus.forward) {
                   setState(() {
-                    _cardIndex = newCardIndex;
+                    _cardIndex = _newCardIndex;
                     _dragState = DragState.idle;
                     _cardOffset = 0;
                   });
