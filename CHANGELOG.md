@@ -1,3 +1,7 @@
+## [0.1.2] - 15 February 2021
+
+* Improved DartDocs
+
 ## [0.1.1] - 06 June 2020
 
 * Added a duration parameter for customising the speediness

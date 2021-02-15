@@ -2,22 +2,10 @@ library tiktoklikescroller;
 
 import 'package:flutter/widgets.dart';
 
-/*
-The main and only entrypoint
+/// A fullscreen vertical scroller like TikTok
+///
+/// Use [TikTokStyleFullPageScroller] as you would `ListView.Builder()`
 
-Treat [TikTokStyleFullPageScroller] as you would ListView.Builder()
-Pass in the
-* [contentSize], the number of elements in the list, 
-* [swipePositionThreshold], which is the fraction of the screen that needs be 
-scrolled before it will animate to the next (otherwise it will animate back to 
-the current card's resting position). 
-* [swipVelocityThreshold] will override the position threshold if the card is 
-flicked a small distance but quickly.
-* [animationDuration] is the time the card will take to animate between cards.
-* [builder] is a function that converts a context and an index to a Widget to be
-shown.
-
-*/
 class TikTokStyleFullPageScroller extends StatefulWidget {
   const TikTokStyleFullPageScroller({
     @required this.contentSize,
@@ -27,10 +15,23 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 300),
   });
 
+  /// The number of elements in the list,
   final int contentSize;
+
+  /// A function that converts a context and an index to a Widget to be rendered
   final IndexedWidgetBuilder builder;
+
+  /// The fraction of the screen scrolled (before lifting your finger) that will
+  /// cause the card to animate to the next/previous card (otherwise the card
+  /// will animate to the current card's resting position),
   final double swipePositionThreshold;
+
+  /// This threshold will override [swipePositionThreshold] if the card is
+  /// flicked a small distance but quickly,
   final double swipeVelocityThreshold;
+
+  /// The time the card will take to animate to either off the screen or its
+  /// resting position,
   final Duration animationDuration;
 
   @override
