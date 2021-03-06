@@ -20,9 +20,8 @@ class MyApp extends StatelessWidget {
 
 class HomeWidget extends StatelessWidget {
   const HomeWidget({
-    Key key,
-    @required this.colors,
-  }) : super(key: key);
+    required this.colors,
+  });
 
   final List<Color> colors;
 
@@ -40,10 +39,12 @@ class HomeWidget extends StatelessWidget {
         builder: (BuildContext context, int index) {
           return Container(
             color: colors[index],
-            child: Text(
-              '$index',
-              key: Key('$index-text'),
-              style: const TextStyle(fontSize: 48, color: Colors.white),
+            child: Center(
+              child: Text(
+                '$index',
+                key: Key('$index-text'),
+                style: const TextStyle(fontSize: 48, color: Colors.white),
+              ),
             ),
           );
         },

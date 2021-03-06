@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tiktokscroller_example/example.dart';
 
 void main() {
-  List<Color> colors;
+  late List<Color> colors;
 
   setUp(() async {
     colors = <Color>[Colors.red, Colors.blue, Colors.green];

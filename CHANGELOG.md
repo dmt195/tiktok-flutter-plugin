@@ -1,3 +1,7 @@
+## [0.1.5] - 04 March 2021
+
+* Support for null safety
+
 ## [0.1.2] - 15 February 2021
 
 * Improved DartDocs

@@ -8,8 +8,8 @@ import 'package:flutter/widgets.dart';
 
 class TikTokStyleFullPageScroller extends StatefulWidget {
   const TikTokStyleFullPageScroller({
-    @required this.contentSize,
-    @required this.builder,
+    required this.contentSize,
+    required this.builder,
     this.swipePositionThreshold = 0.20,
     this.swipeVelocityThreshold = 1000,
     this.animationDuration = const Duration(milliseconds: 300),
@@ -42,13 +42,13 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
 class _TikTokStyleFullPageScrollerState
     extends State<TikTokStyleFullPageScroller>
     with SingleTickerProviderStateMixin {
-  Size _screenSize;
-  double _cardOffset;
-  double _dragStartPosition;
-  AnimationController _animationController;
-  Animation<double> _animation;
-  int _cardIndex;
-  DragState _dragState;
+  late Size _screenSize;
+  late double _cardOffset;
+  late double _dragStartPosition;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  late int _cardIndex;
+  late DragState _dragState;
 
   @override
   void initState() {
@@ -98,7 +98,7 @@ class _TikTokStyleFullPageScrollerState
               // or if a small flick was faster than the velocity threshold
               if ((_cardOffset <
                           -_screenSize.height * widget.swipePositionThreshold ||
-                      details.primaryVelocity <
+                      details.primaryVelocity! <
                           -widget.swipeVelocityThreshold) &&
                   _cardIndex < widget.contentSize - 1) {
                 // build animation, set state to animate forward
@@ -106,7 +106,7 @@ class _TikTokStyleFullPageScrollerState
                 _state = DragState.animatingForward;
               } else if ((_cardOffset >
                           _screenSize.height / widget.swipePositionThreshold ||
-                      details.primaryVelocity >
+                      details.primaryVelocity! >
                           widget.swipeVelocityThreshold) &&
                   _cardIndex > 0) {
                 // Animate to previous card
