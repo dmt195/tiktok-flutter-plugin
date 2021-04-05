@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 /// A fullscreen vertical scroller like TikTok
 ///
 /// Use [TikTokStyleFullPageScroller] as you would `ListView.Builder()`
-
 class TikTokStyleFullPageScroller extends StatefulWidget {
   const TikTokStyleFullPageScroller({
     required this.contentSize,

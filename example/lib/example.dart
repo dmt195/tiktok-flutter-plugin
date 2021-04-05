@@ -6,14 +6,16 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final List<Color> colors = <Color>[
+    final List<Color> _colors = <Color>[
       Colors.red,
       Colors.blue,
       Colors.green,
+      Colors.orange,
+      Colors.white
     ];
 
     return MaterialApp(
-      home: HomeWidget(colors: colors),
+      home: HomeWidget(colors: _colors),
     );
   }
 }
