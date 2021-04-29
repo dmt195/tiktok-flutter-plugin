@@ -87,7 +87,7 @@ class _TikTokStyleFullPageScrollerState
               onVerticalDragStart: (DragStartDetails details) {
                 setState(() {
                   _dragState = DragState.dragging;
-                  _dragStartPosition = details.globalPosition.dy;
+                  _dragStartPosition = details.localPosition.dy;
                 });
               },
               onVerticalDragUpdate: (DragUpdateDetails details) {

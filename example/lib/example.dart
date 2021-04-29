@@ -11,7 +11,6 @@ class MyApp extends StatelessWidget {
       Colors.blue,
       Colors.green,
       Colors.orange,
-      Colors.white
     ];
 
     return MaterialApp(

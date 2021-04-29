@@ -11,7 +11,6 @@ class MyApp extends StatelessWidget {
       Colors.blue,
       Colors.green,
       Colors.orange,
-      Colors.white
     ];
 
     return MaterialApp(
@@ -31,29 +30,31 @@ class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SizedBox(
-          height: 450,
-          width: 300,
-          child: TikTokStyleFullPageScroller(
-            contentSize: colors.length,
-            swipePositionThreshold: 0.2,
-            // ^ the fraction of the screen needed to scroll
-            swipeVelocityThreshold: 2000,
-            // ^ the velocity threshold for smaller scrolls
-            animationDuration: const Duration(milliseconds: 300),
-            // ^ how long the animation will take
-            builder: (BuildContext context, int index) {
-              return Container(
-                color: colors[index],
-                child: Center(
-                  child: Text(
-                    '$index',
-                    key: Key('$index-text'),
-                    style: const TextStyle(fontSize: 48, color: Colors.white),
+        child: Center(
+          child: SizedBox(
+            height: 450,
+            width: 300,
+            child: TikTokStyleFullPageScroller(
+              contentSize: colors.length,
+              swipePositionThreshold: 0.2,
+              // ^ the fraction of the screen needed to scroll
+              swipeVelocityThreshold: 2000,
+              // ^ the velocity threshold for smaller scrolls
+              animationDuration: const Duration(milliseconds: 300),
+              // ^ how long the animation will take
+              builder: (BuildContext context, int index) {
+                return Container(
+                  color: colors[index],
+                  child: Center(
+                    child: Text(
+                      '$index',
+                      key: Key('$index-text'),
+                      style: const TextStyle(fontSize: 48, color: Colors.white),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

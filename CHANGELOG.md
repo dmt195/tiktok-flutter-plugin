@@ -1,3 +1,7 @@
+## [0.1.6] - 29 April 2021
+
+* Bug fix when using within another view. Replaced MediaQuery with LayoutBuilder
+
 ## [0.1.5] - 04 March 2021
 
 * Support for null safety
