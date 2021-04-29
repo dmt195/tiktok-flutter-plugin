@@ -41,7 +41,7 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
 class _TikTokStyleFullPageScrollerState
     extends State<TikTokStyleFullPageScroller>
     with SingleTickerProviderStateMixin {
-  late Size _screenSize;
+  late Size _containerSize;
   late double _cardOffset;
   late double _dragStartPosition;
   late AnimationController _animationController;
@@ -64,82 +64,89 @@ class _TikTokStyleFullPageScrollerState
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = MediaQuery.of(context).size;
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      /// Takes the size of the container, not the whole screen size
+      _containerSize = constraints.biggest;
 
-    return Stack(
-      children: <Widget>[
-        if (_cardIndex > 0)
+      return Stack(
+        children: <Widget>[
+          if (_cardIndex > 0)
+            Positioned(
+              bottom: _containerSize.height - _cardOffset,
+              child: SizedBox.fromSize(
+                  size: _containerSize,
+                  child: widget.builder(context, _cardIndex - 1)),
+            ),
           Positioned(
-            bottom: _screenSize.height - _cardOffset,
-            child: SizedBox.fromSize(
-                size: _screenSize,
-                child: widget.builder(context, _cardIndex - 1)),
-          ),
-        Positioned(
-          top: _cardOffset,
-          child: GestureDetector(
-            child: SizedBox.fromSize(
-                size: _screenSize, child: widget.builder(context, _cardIndex)),
-            onVerticalDragStart: (DragStartDetails details) {
-              setState(() {
-                _dragState = DragState.dragging;
-                _dragStartPosition = details.globalPosition.dy;
-              });
-            },
-            onVerticalDragUpdate: (DragUpdateDetails details) {
-              setState(() {
-                _cardOffset = details.localPosition.dy - _dragStartPosition;
-              });
-            },
-            onVerticalDragEnd: (DragEndDetails details) {
-              DragState _state;
-              // If the length of scroll goes beyond the point of no return
-              // or if a small flick was faster than the velocity threshold
-              if ((_cardOffset <
-                          -_screenSize.height * widget.swipePositionThreshold ||
-                      details.primaryVelocity! <
-                          -widget.swipeVelocityThreshold) &&
-                  _cardIndex < widget.contentSize - 1) {
-                // build animation, set state to animate forward
-                // Animate to next card
-                _state = DragState.animatingForward;
-              } else if ((_cardOffset >
-                          _screenSize.height / widget.swipePositionThreshold ||
-                      details.primaryVelocity! >
-                          widget.swipeVelocityThreshold) &&
-                  _cardIndex > 0) {
-                // Animate to previous card
-                _state = DragState.animatingBackward;
-              } else {
-                _state = DragState.animatingToCancel;
-              }
-              setState(() {
-                _dragState = _state;
-              });
-              _createAnimation();
-            },
-          ),
-        ),
-        if (_cardIndex < widget.contentSize - 1)
-          Positioned(
-            top: _screenSize.height + _cardOffset,
-            child: SizedBox.fromSize(
-              size: _screenSize,
-              child: widget.builder(context, _cardIndex + 1),
+            top: _cardOffset,
+            child: GestureDetector(
+              child: SizedBox.fromSize(
+                  size: _containerSize,
+                  child: widget.builder(context, _cardIndex)),
+              onVerticalDragStart: (DragStartDetails details) {
+                setState(() {
+                  _dragState = DragState.dragging;
+                  _dragStartPosition = details.globalPosition.dy;
+                });
+              },
+              onVerticalDragUpdate: (DragUpdateDetails details) {
+                setState(() {
+                  _cardOffset = details.localPosition.dy - _dragStartPosition;
+                });
+              },
+              onVerticalDragEnd: (DragEndDetails details) {
+                DragState _state;
+                // If the length of scroll goes beyond the point of no return
+                // or if a small flick was faster than the velocity threshold
+                if ((_cardOffset <
+                            -_containerSize.height *
+                                widget.swipePositionThreshold ||
+                        details.primaryVelocity! <
+                            -widget.swipeVelocityThreshold) &&
+                    _cardIndex < widget.contentSize - 1) {
+                  // build animation, set state to animate forward
+                  // Animate to next card
+                  _state = DragState.animatingForward;
+                } else if ((_cardOffset >
+                            _containerSize.height /
+                                widget.swipePositionThreshold ||
+                        details.primaryVelocity! >
+                            widget.swipeVelocityThreshold) &&
+                    _cardIndex > 0) {
+                  // Animate to previous card
+                  _state = DragState.animatingBackward;
+                } else {
+                  _state = DragState.animatingToCancel;
+                }
+                setState(() {
+                  _dragState = _state;
+                });
+                _createAnimation();
+              },
             ),
           ),
-      ],
-    );
+          if (_cardIndex < widget.contentSize - 1)
+            Positioned(
+              top: _containerSize.height + _cardOffset,
+              child: SizedBox.fromSize(
+                size: _containerSize,
+                child: widget.builder(context, _cardIndex + 1),
+              ),
+            ),
+        ],
+      );
+    });
   }
 
   void _createAnimation() {
     double _end;
     switch (_dragState) {
       case DragState.animatingForward:
-        _end = -_screenSize.height;
+        _end = -_containerSize.height;
         break;
       case DragState.animatingBackward:
-        _end = _screenSize.height;
+        _end = _containerSize.height;
         break;
       case DragState.animatingToCancel:
       default:
