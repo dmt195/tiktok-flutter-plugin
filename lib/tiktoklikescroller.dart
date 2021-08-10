@@ -2,8 +2,15 @@ library tiktoklikescroller;
 
 import 'package:flutter/widgets.dart';
 
-typedef void ScrollCompleteCallback(int currentIndex);
-typedef void DragBackFirstCallback();
+enum ScrollEventType {
+  SCROLLED_FORWARD,
+  SCROLLED_BACKWARDS,
+  FINISHED_ANIMATION,
+  NO_SCROLL_END_OF_LIST,
+  NO_SCROLL_START_OF_LIST,
+}
+
+typedef void ScrollEventCallback(ScrollEventType type, {int currentIndex});
 
 /// A fullscreen vertical scroller like TikTok
 ///
@@ -15,8 +22,7 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
     this.swipePositionThreshold = 0.20,
     this.swipeVelocityThreshold = 1000,
     this.animationDuration = const Duration(milliseconds: 300),
-    this.onScrollComplete,
-    this.onDragBackFirst,
+    this.onScrollEvent,
   });
 
   /// The number of elements in the list,
@@ -38,8 +44,7 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
   /// resting position,
   final Duration animationDuration;
 
-  final ScrollCompleteCallback? onScrollComplete;
-  final DragBackFirstCallback? onDragBackFirst;
+  final ScrollEventCallback? onScrollEvent;
 
   @override
   _TikTokStyleFullPageScrollerState createState() =>
@@ -119,9 +124,10 @@ class _TikTokStyleFullPageScrollerState
                 } else if ((_cardOffset >
                         _containerSize.height / widget.swipePositionThreshold ||
                     details.primaryVelocity! > widget.swipeVelocityThreshold)) {
-                  if (_cardIndex == 0 && widget.onDragBackFirst != null) {
-                    // we are trying to swipe back the first card
-                    widget.onDragBackFirst!();
+                  if (_cardIndex == 0) {
+                    // we are trying to swipe back the first card, if callback exists, call it
+                    widget.onScrollEvent
+                        ?.call(ScrollEventType.NO_SCROLL_START_OF_LIST);
                     _state = DragState.animatingToCancel;
                   } else {
                     // if we are not on the first card and swiping back
@@ -174,16 +180,21 @@ class _TikTokStyleFullPageScrollerState
                 // change the offset back to zero,
                 // change the drag state back to idle
                 int _newCardIndex = _cardIndex;
-                if (widget.onScrollComplete != null) {
-                  // we finished the scroll and updated the card
-                  widget.onScrollComplete!(_newCardIndex);
-                }
+                // we finished the scroll and updated the card
+                widget.onScrollEvent?.call(ScrollEventType.FINISHED_ANIMATION,
+                    currentIndex: _newCardIndex);
+
                 switch (_dragState) {
                   case DragState.animatingForward:
                     _newCardIndex++;
+                    widget.onScrollEvent?.call(ScrollEventType.SCROLLED_FORWARD,
+                        currentIndex: _newCardIndex);
                     break;
                   case DragState.animatingBackward:
                     _newCardIndex--;
+                    widget.onScrollEvent?.call(
+                        ScrollEventType.SCROLLED_BACKWARDS,
+                        currentIndex: _newCardIndex);
                     break;
                   case DragState.animatingToCancel:
                     //no change to card index
