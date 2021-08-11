@@ -37,6 +37,8 @@ class HomeWidget extends StatelessWidget {
         // ^ the velocity threshold for smaller scrolls
         animationDuration: const Duration(milliseconds: 300),
         // ^ how long the animation will take
+        onScrollEvent: _handleCallbackEvent,
+        // ^ registering our own function to listen to page changes
         builder: (BuildContext context, int index) {
           return Container(
             color: colors[index],
@@ -51,5 +53,10 @@ class HomeWidget extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _handleCallbackEvent(ScrollEventType type, {int? currentIndex}) {
+    print(
+        "Scroll callback received with data: {type: $type, and index: ${currentIndex ?? 'not given'}}");
   }
 }

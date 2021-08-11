@@ -1,3 +1,7 @@
+## [0.1.8] - 11 August 2021
+
+* Introducing an event callback
+
 ## [0.1.6] - 29 April 2021
 
 * Bug fix when using within another view. Replaced MediaQuery with LayoutBuilder

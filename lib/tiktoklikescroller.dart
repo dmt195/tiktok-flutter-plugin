@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 enum ScrollEventType {
   SCROLLED_FORWARD,
   SCROLLED_BACKWARDS,
-  FINISHED_ANIMATION,
+  NO_SCROLL_THRESHOLD,
   NO_SCROLL_END_OF_LIST,
   NO_SCROLL_START_OF_LIST,
 }
@@ -44,6 +44,7 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
   /// resting position,
   final Duration animationDuration;
 
+  /// An optional callback to be notified of different scroll events
   final ScrollEventCallback? onScrollEvent;
 
   @override
@@ -109,32 +110,45 @@ class _TikTokStyleFullPageScrollerState
                 });
               },
               onVerticalDragEnd: (DragEndDetails details) {
+                bool positiveDragThresholdMet = (_cardOffset <
+                        -_containerSize.height *
+                            widget.swipePositionThreshold ||
+                    details.primaryVelocity! < -widget.swipeVelocityThreshold);
+
+                bool negativeDragThresholdMet = (_cardOffset >
+                        _containerSize.height / widget.swipePositionThreshold ||
+                    details.primaryVelocity! > widget.swipeVelocityThreshold);
+
                 DragState _state;
                 // If the length of scroll goes beyond the point of no return
                 // or if a small flick was faster than the velocity threshold
-                if ((_cardOffset <
-                            -_containerSize.height *
-                                widget.swipePositionThreshold ||
-                        details.primaryVelocity! <
-                            -widget.swipeVelocityThreshold) &&
+                if (positiveDragThresholdMet &&
                     _cardIndex < widget.contentSize - 1) {
                   // build animation, set state to animate forward
                   // Animate to next card
                   _state = DragState.animatingForward;
-                } else if ((_cardOffset >
-                        _containerSize.height / widget.swipePositionThreshold ||
-                    details.primaryVelocity! > widget.swipeVelocityThreshold)) {
+                } else if (negativeDragThresholdMet) {
                   if (_cardIndex == 0) {
-                    // we are trying to swipe back the first card, if callback exists, call it
-                    widget.onScrollEvent
-                        ?.call(ScrollEventType.NO_SCROLL_START_OF_LIST);
+                    // we are trying to swipe back beyond the first card, if callback exists, call it
+                    widget.onScrollEvent?.call(
+                        ScrollEventType.NO_SCROLL_START_OF_LIST,
+                        currentIndex: 0);
                     _state = DragState.animatingToCancel;
                   } else {
                     // if we are not on the first card and swiping back
                     // Animate to previous card
                     _state = DragState.animatingBackward;
                   }
+                } else if (positiveDragThresholdMet &&
+                    _cardIndex == widget.contentSize - 1) {
+                  widget.onScrollEvent?.call(
+                      ScrollEventType.NO_SCROLL_END_OF_LIST,
+                      currentIndex: widget.contentSize - 1);
+                  _state = DragState.animatingToCancel;
                 } else {
+                  // Thresholds not met so relaxing back to initial state
+                  widget.onScrollEvent
+                      ?.call(ScrollEventType.NO_SCROLL_THRESHOLD);
                   _state = DragState.animatingToCancel;
                 }
                 setState(() {
@@ -181,9 +195,6 @@ class _TikTokStyleFullPageScrollerState
                 // change the drag state back to idle
                 int _newCardIndex = _cardIndex;
                 // we finished the scroll and updated the card
-                widget.onScrollEvent?.call(ScrollEventType.FINISHED_ANIMATION,
-                    currentIndex: _newCardIndex);
-
                 switch (_dragState) {
                   case DragState.animatingForward:
                     _newCardIndex++;
