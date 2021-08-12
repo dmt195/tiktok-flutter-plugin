@@ -1,0 +1,21 @@
+name: Publish
+
+on:
+  push:
+    branches: [ master ]
+    
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Publish
+        uses: sakebook/actions-flutter-pub-publisher@v1.3.1
+        with:
+          credential: ${{ secrets.DART_PUB_CREDS }}
+          flutter_package: true
+          skip_test: false
+          dry_run: true
