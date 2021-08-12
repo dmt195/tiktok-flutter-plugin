@@ -17,5 +17,5 @@ jobs:
         with:
           credential: ${{ secrets.DART_PUB_CREDS }}
           flutter_package: true
-          skip_test: false
+          skip_test: true
           dry_run: true
