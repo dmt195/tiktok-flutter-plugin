@@ -4,10 +4,11 @@ import 'package:tiktoklikescroller/controller.dart';
 import 'package:tiktokscroller_example/example.dart';
 
 // helper function to reduce repeating
-  Future<void> dragAndSettle(WidgetTester tester, Finder matcher, double distance) async {
-    await tester.drag(matcher, Offset(0, -distance));
-    await tester.pumpAndSettle(const Duration(milliseconds: 500));
-  }
+Future<void> dragAndSettle(
+    WidgetTester tester, Finder matcher, double distance) async {
+  await tester.drag(matcher, Offset(0, -distance));
+  await tester.pumpAndSettle(const Duration(milliseconds: 500));
+}
 
 void main() {
   late List<Color> colors;
@@ -124,6 +125,4 @@ void main() {
     // Callback should inform us that we've reached the end of the list
     expect(scrollEvent, ScrollEventType.NO_SCROLL_END_OF_LIST);
   });
-
-
 }
