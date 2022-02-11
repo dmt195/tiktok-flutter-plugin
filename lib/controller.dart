@@ -1,4 +1,3 @@
-
 enum ScrollEventType {
   SCROLLED_FORWARD,
   SCROLLED_BACKWARDS,

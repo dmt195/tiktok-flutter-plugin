@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 
 import 'controller.dart';
 
-
 /// A fullscreen vertical scroller like TikTok
 ///
 /// Use [TikTokStyleFullPageScroller] as you would `ListView.Builder()`
@@ -179,47 +178,46 @@ class _TikTokStyleFullPageScrollerState
     }
     _animation = Tween<double>(begin: _cardOffset, end: _end)
         .animate(_animationController)
-          ..addListener(_animationListener)
-          ..addStatusListener((AnimationStatus _status) {
-            switch (_status) {
-              case AnimationStatus.completed:
-                // change the card index if required,
-                // change the offset back to zero,
-                // change the drag state back to idle
-                int _newCardIndex = _cardIndex;
-                // we finished the scroll and updated the card
-                switch (_dragState) {
-                  case DragState.animatingForward:
-                    _newCardIndex++;
-                    widget.onScrollEvent?.call(ScrollEventType.SCROLLED_FORWARD,
-                        currentIndex: _newCardIndex);
-                    break;
-                  case DragState.animatingBackward:
-                    _newCardIndex--;
-                    widget.onScrollEvent?.call(
-                        ScrollEventType.SCROLLED_BACKWARDS,
-                        currentIndex: _newCardIndex);
-                    break;
-                  case DragState.animatingToCancel:
-                    //no change to card index
-                    break;
-                  default:
-                }
-
-                if (_status != AnimationStatus.dismissed &&
-                    _status != AnimationStatus.forward) {
-                  setState(() {
-                    _cardIndex = _newCardIndex;
-                    _dragState = DragState.idle;
-                    _cardOffset = 0;
-                  });
-                  _animation.removeListener(_animationListener);
-                  _animationController.reset();
-                }
+      ..addListener(_animationListener)
+      ..addStatusListener((AnimationStatus _status) {
+        switch (_status) {
+          case AnimationStatus.completed:
+            // change the card index if required,
+            // change the offset back to zero,
+            // change the drag state back to idle
+            int _newCardIndex = _cardIndex;
+            // we finished the scroll and updated the card
+            switch (_dragState) {
+              case DragState.animatingForward:
+                _newCardIndex++;
+                widget.onScrollEvent?.call(ScrollEventType.SCROLLED_FORWARD,
+                    currentIndex: _newCardIndex);
+                break;
+              case DragState.animatingBackward:
+                _newCardIndex--;
+                widget.onScrollEvent?.call(ScrollEventType.SCROLLED_BACKWARDS,
+                    currentIndex: _newCardIndex);
+                break;
+              case DragState.animatingToCancel:
+                //no change to card index
                 break;
               default:
             }
-          });
+
+            if (_status != AnimationStatus.dismissed &&
+                _status != AnimationStatus.forward) {
+              setState(() {
+                _cardIndex = _newCardIndex;
+                _dragState = DragState.idle;
+                _cardOffset = 0;
+              });
+              _animation.removeListener(_animationListener);
+              _animationController.reset();
+            }
+            break;
+          default:
+        }
+      });
     _animationController.forward();
   }
 
