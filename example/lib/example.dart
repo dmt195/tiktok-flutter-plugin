@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiktoklikescroller/controller.dart';
 import 'package:tiktoklikescroller/tiktoklikescroller.dart';
 
 void main() => runApp(MyApp());
@@ -14,7 +15,9 @@ class MyApp extends StatelessWidget {
     ];
 
     return MaterialApp(
-      home: HomeWidget(colors: _colors),
+      home: HomeWidget(
+        colors: _colors,
+      ),
     );
   }
 }
@@ -22,8 +25,11 @@ class MyApp extends StatelessWidget {
 class HomeWidget extends StatelessWidget {
   const HomeWidget({
     required this.colors,
+    this.callback,
   });
 
+// This is a parameter to support testing in this repo
+  final ScrollEventCallback? callback;
   final List<Color> colors;
 
   @override
@@ -37,7 +43,7 @@ class HomeWidget extends StatelessWidget {
         // ^ the velocity threshold for smaller scrolls
         animationDuration: const Duration(milliseconds: 300),
         // ^ how long the animation will take
-        onScrollEvent: _handleCallbackEvent,
+        onScrollEvent: callback ?? _handleCallbackEvent,
         // ^ registering our own function to listen to page changes
         builder: (BuildContext context, int index) {
           return Container(

@@ -2,15 +2,8 @@ library tiktoklikescroller;
 
 import 'package:flutter/widgets.dart';
 
-enum ScrollEventType {
-  SCROLLED_FORWARD,
-  SCROLLED_BACKWARDS,
-  NO_SCROLL_THRESHOLD,
-  NO_SCROLL_END_OF_LIST,
-  NO_SCROLL_START_OF_LIST,
-}
+import 'controller.dart';
 
-typedef void ScrollEventCallback(ScrollEventType type, {int currentIndex});
 
 /// A fullscreen vertical scroller like TikTok
 ///

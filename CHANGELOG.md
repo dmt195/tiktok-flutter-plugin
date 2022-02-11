@@ -1,3 +1,7 @@
+## [0.1.9] - 11 February 2022
+
+* Introducing a few more tests to cover the callback and considering architecture for controller implementation
+
 ## [0.1.8] - 11 August 2021
 
 * Introducing an event callback
