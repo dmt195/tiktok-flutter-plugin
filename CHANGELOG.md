@@ -1,3 +1,7 @@
+## [0.1.10] - 11 February 2022
+
+* Fixing static analysis issues highlighted by pub.dev
+
 ## [0.1.9] - 11 February 2022
 
 * Introducing a few more tests to cover the callback and considering architecture for controller implementation
