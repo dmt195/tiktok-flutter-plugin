@@ -122,8 +122,8 @@ class _TikTokStyleFullPageScrollerState
                 } else if (negativeDragThresholdMet) {
                   if (_cardIndex == 0) {
                     // we are trying to swipe back beyond the first card, if callback exists, call it
-                    widget.onScrollEvent?.call(
-                        ScrollEventType.NO_SCROLL_START_OF_LIST,
+                    widget.onScrollEvent?.call(ScrollDirection.BACKWARDS,
+                        ScrollSuccess.FAILED_END_OF_LIST,
                         currentIndex: 0);
                     _state = DragState.animatingToCancel;
                   } else {
@@ -134,13 +134,16 @@ class _TikTokStyleFullPageScrollerState
                 } else if (positiveDragThresholdMet &&
                     _cardIndex == widget.contentSize - 1) {
                   widget.onScrollEvent?.call(
-                      ScrollEventType.NO_SCROLL_END_OF_LIST,
+                      ScrollDirection.FORWARD, ScrollSuccess.FAILED_END_OF_LIST,
                       currentIndex: widget.contentSize - 1);
                   _state = DragState.animatingToCancel;
                 } else {
                   // Thresholds not met so relaxing back to initial state
-                  widget.onScrollEvent
-                      ?.call(ScrollEventType.NO_SCROLL_THRESHOLD);
+                  widget.onScrollEvent?.call(
+                      _cardOffset < 0
+                          ? ScrollDirection.FORWARD
+                          : ScrollDirection.BACKWARDS,
+                      ScrollSuccess.FAILED_THRESHOLD_NOT_REACHED);
                   _state = DragState.animatingToCancel;
                 }
                 setState(() {
@@ -190,12 +193,14 @@ class _TikTokStyleFullPageScrollerState
             switch (_dragState) {
               case DragState.animatingForward:
                 _newCardIndex++;
-                widget.onScrollEvent?.call(ScrollEventType.SCROLLED_FORWARD,
+                widget.onScrollEvent?.call(
+                    ScrollDirection.FORWARD, ScrollSuccess.SUCCESS,
                     currentIndex: _newCardIndex);
                 break;
               case DragState.animatingBackward:
                 _newCardIndex--;
-                widget.onScrollEvent?.call(ScrollEventType.SCROLLED_BACKWARDS,
+                widget.onScrollEvent?.call(
+                    ScrollDirection.BACKWARDS, ScrollSuccess.SUCCESS,
                     currentIndex: _newCardIndex);
                 break;
               case DragState.animatingToCancel:
