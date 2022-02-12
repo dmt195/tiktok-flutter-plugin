@@ -12,15 +12,17 @@ Future<void> dragAndSettle(
 
 void main() {
   late List<Color> colors;
-  ScrollEventType? scrollEvent;
+  ScrollDirection? swipeDir;
+  ScrollSuccess? swipeSuc;
   int? pageNo;
   late ScrollEventCallback scrollListener;
 
   setUp(() async {
     colors = <Color>[Colors.red, Colors.blue, Colors.green];
-    scrollListener = (event, {int? currentIndex}) {
-      scrollEvent = event;
+    scrollListener = (direction, success, {int? currentIndex}) {
+      swipeDir = direction;
       pageNo = currentIndex;
+      swipeSuc = success;
     };
   });
 
@@ -64,7 +66,8 @@ void main() {
     // 2 is not generated
     final Finder labelTwo = find.text('2');
     expect(labelTwo, findsNothing);
-    expect(scrollEvent, ScrollEventType.NO_SCROLL_THRESHOLD);
+    expect(swipeDir, ScrollDirection.FORWARD);
+    expect(swipeSuc, ScrollSuccess.FAILED_THRESHOLD_NOT_REACHED);
     expect(pageNo, null);
   });
 
@@ -80,7 +83,8 @@ void main() {
     final Finder labelTwo = find.text('2');
     // 2 is not generated yet
     expect(labelTwo, findsNothing);
-    expect(scrollEvent, ScrollEventType.NO_SCROLL_START_OF_LIST);
+    expect(swipeDir, ScrollDirection.BACKWARDS);
+    expect(swipeSuc, ScrollSuccess.FAILED_END_OF_LIST);
     expect(pageNo, 0);
   });
 
@@ -95,7 +99,8 @@ void main() {
     // 1 is current, 2 is produced (below the fold)
     final Finder labelTwo = find.text('2');
     expect(labelTwo, findsOneWidget);
-    expect(scrollEvent, ScrollEventType.SCROLLED_FORWARD);
+    expect(swipeDir, ScrollDirection.FORWARD);
+    expect(swipeSuc, ScrollSuccess.SUCCESS);
     expect(pageNo, 1);
   });
 
@@ -114,7 +119,8 @@ void main() {
     final Finder labelOne = find.text('1').first;
     await dragAndSettle(tester, labelOne, dragDistance);
     expect(pageNo, 2);
-    expect(scrollEvent, ScrollEventType.SCROLLED_FORWARD);
+    expect(swipeDir, ScrollDirection.FORWARD);
+    expect(swipeSuc, ScrollSuccess.SUCCESS);
     final Finder labelTwo = find.text('2').first;
     await dragAndSettle(tester, labelTwo, dragDistance);
     expect(pageNo, 2);
@@ -123,6 +129,8 @@ void main() {
     // 0 is no longer in the widget tree
     expect(find.text('0'), findsNothing);
     // Callback should inform us that we've reached the end of the list
-    expect(scrollEvent, ScrollEventType.NO_SCROLL_END_OF_LIST);
+    expect(swipeDir, ScrollDirection.FORWARD);
+    expect(swipeSuc, ScrollSuccess.FAILED_END_OF_LIST);
+    expect(pageNo, 2);
   });
 }

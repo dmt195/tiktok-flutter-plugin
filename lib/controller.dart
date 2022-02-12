@@ -1,12 +1,14 @@
-enum ScrollEventType {
-  SCROLLED_FORWARD,
-  SCROLLED_BACKWARDS,
-  NO_SCROLL_THRESHOLD,
-  NO_SCROLL_END_OF_LIST,
-  NO_SCROLL_START_OF_LIST,
+enum ScrollDirection { FORWARD, BACKWARDS }
+
+enum ScrollSuccess {
+  SUCCESS,
+  FAILED_THRESHOLD_NOT_REACHED,
+  FAILED_END_OF_LIST,
 }
 
-typedef void ScrollEventCallback(ScrollEventType type, {int currentIndex});
+typedef void ScrollEventCallback(
+    ScrollDirection direction, ScrollSuccess success,
+    {int currentIndex});
 
 abstract class Controller {
   int getScrollPostion();

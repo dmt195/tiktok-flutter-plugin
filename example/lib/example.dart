@@ -61,8 +61,9 @@ class HomeWidget extends StatelessWidget {
     );
   }
 
-  void _handleCallbackEvent(ScrollEventType type, {int? currentIndex}) {
+  void _handleCallbackEvent(ScrollDirection direction, ScrollSuccess success,
+      {int? currentIndex}) {
     print(
-        "Scroll callback received with data: {type: $type, and index: ${currentIndex ?? 'not given'}}");
+        "Scroll callback received with data: {direction: $direction, success: $success and index: ${currentIndex ?? 'not given'}}");
   }
 }
