@@ -3,6 +3,10 @@ library tiktoklikescroller;
 import 'package:flutter/widgets.dart';
 
 import 'controller.dart';
+import 'types.dart';
+
+export 'controller.dart';
+export 'types.dart';
 
 /// A fullscreen vertical scroller like TikTok
 ///
@@ -14,7 +18,7 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
     this.swipePositionThreshold = 0.20,
     this.swipeVelocityThreshold = 1000,
     this.animationDuration = const Duration(milliseconds: 300),
-    this.onScrollEvent,
+    this.controller,
   });
 
   /// The number of elements in the list,
@@ -36,8 +40,9 @@ class TikTokStyleFullPageScroller extends StatefulWidget {
   /// resting position,
   final Duration animationDuration;
 
-  /// An optional callback to be notified of different scroll events
-  final ScrollEventCallback? onScrollEvent;
+  /// An optional controller to request changes and to notify consumers of changes
+  /// via an optional listener
+  final Controller? controller;
 
   @override
   _TikTokStyleFullPageScrollerState createState() =>
@@ -54,6 +59,13 @@ class _TikTokStyleFullPageScrollerState
   late Animation<double> _animation;
   late int _cardIndex;
   late DragState _dragState;
+  late Stream<int>? feedback;
+
+  /// Internal index for tracking desired controller target page index
+  int _targetIndex = -1;
+
+  /// Event tracking between functions
+  ScrollEvent? _pendingEvent;
 
   @override
   void initState() {
@@ -65,6 +77,20 @@ class _TikTokStyleFullPageScrollerState
     );
     _cardIndex = 0;
     _dragState = DragState.idle;
+
+    if (widget.controller != null) {
+      widget.controller!.attach()?.listen((event) {
+        switch (event.command) {
+          case ControllerCommandTypes.jumpToPosition:
+            _jumpToPosition(event.data as int);
+            break;
+          case ControllerCommandTypes.animateToPosition:
+            _animateToPosition(event.data as int);
+            break;
+        }
+        print("controller went: $event");
+      });
+    }
     super.initState();
   }
 
@@ -122,9 +148,8 @@ class _TikTokStyleFullPageScrollerState
                 } else if (negativeDragThresholdMet) {
                   if (_cardIndex == 0) {
                     // we are trying to swipe back beyond the first card, if callback exists, call it
-                    widget.onScrollEvent?.call(ScrollDirection.BACKWARDS,
-                        ScrollSuccess.FAILED_END_OF_LIST,
-                        currentIndex: 0);
+                    _pendingEvent = ScrollEvent(ScrollDirection.BACKWARDS,
+                        ScrollSuccess.FAILED_END_OF_LIST, 0);
                     _state = DragState.animatingToCancel;
                   } else {
                     // if we are not on the first card and swiping back
@@ -133,17 +158,17 @@ class _TikTokStyleFullPageScrollerState
                   }
                 } else if (positiveDragThresholdMet &&
                     _cardIndex == widget.contentSize - 1) {
-                  widget.onScrollEvent?.call(
-                      ScrollDirection.FORWARD, ScrollSuccess.FAILED_END_OF_LIST,
-                      currentIndex: widget.contentSize - 1);
+                  _pendingEvent = ScrollEvent(ScrollDirection.FORWARD,
+                      ScrollSuccess.FAILED_END_OF_LIST, widget.contentSize - 1);
                   _state = DragState.animatingToCancel;
                 } else {
                   // Thresholds not met so relaxing back to initial state
-                  widget.onScrollEvent?.call(
+                  _pendingEvent = ScrollEvent(
                       _cardOffset < 0
                           ? ScrollDirection.FORWARD
                           : ScrollDirection.BACKWARDS,
-                      ScrollSuccess.FAILED_THRESHOLD_NOT_REACHED);
+                      ScrollSuccess.FAILED_THRESHOLD_NOT_REACHED,
+                      null);
                   _state = DragState.animatingToCancel;
                 }
                 setState(() {
@@ -166,6 +191,8 @@ class _TikTokStyleFullPageScrollerState
     });
   }
 
+  /// Animation co-ordinating function - tracks all types of animations
+  /// including releases from drag events and controller animation requests
   void _createAnimation() {
     double _end;
     switch (_dragState) {
@@ -182,61 +209,105 @@ class _TikTokStyleFullPageScrollerState
     _animation = Tween<double>(begin: _cardOffset, end: _end)
         .animate(_animationController)
       ..addListener(_animationListener)
-      ..addStatusListener((AnimationStatus _status) {
-        switch (_status) {
-          case AnimationStatus.completed:
-            // change the card index if required,
-            // change the offset back to zero,
-            // change the drag state back to idle
-            int _newCardIndex = _cardIndex;
-            // we finished the scroll and updated the card
-            switch (_dragState) {
-              case DragState.animatingForward:
-                _newCardIndex++;
-                widget.onScrollEvent?.call(
-                    ScrollDirection.FORWARD, ScrollSuccess.SUCCESS,
-                    currentIndex: _newCardIndex);
-                break;
-              case DragState.animatingBackward:
-                _newCardIndex--;
-                widget.onScrollEvent?.call(
-                    ScrollDirection.BACKWARDS, ScrollSuccess.SUCCESS,
-                    currentIndex: _newCardIndex);
-                break;
-              case DragState.animatingToCancel:
-                //no change to card index
-                break;
-              default:
-            }
-
-            if (_status != AnimationStatus.dismissed &&
-                _status != AnimationStatus.forward) {
-              setState(() {
-                _cardIndex = _newCardIndex;
-                _dragState = DragState.idle;
-                _cardOffset = 0;
-              });
-              _animation.removeListener(_animationListener);
-              _animationController.reset();
-            }
-            break;
-          default:
-        }
-      });
+      ..addStatusListener(_animationStatusListener);
     _animationController.forward();
   }
 
+  void _animationStatusListener(AnimationStatus _status) {
+    switch (_status) {
+      case AnimationStatus.completed:
+        // change the card index if required,
+        // change the offset back to zero,
+        // change the drag state back to idle
+        int _newCardIndex = _cardIndex;
+        // we finished the scroll and updated the card
+        switch (_dragState) {
+          case DragState.animatingForward:
+            _newCardIndex++;
+            _pendingEvent = ScrollEvent(
+                ScrollDirection.FORWARD, ScrollSuccess.SUCCESS, _newCardIndex);
+            break;
+          case DragState.animatingBackward:
+            _newCardIndex--;
+            _pendingEvent = ScrollEvent(ScrollDirection.BACKWARDS,
+                ScrollSuccess.SUCCESS, _newCardIndex);
+            break;
+          case DragState.animatingToCancel:
+            //no change to card index
+            break;
+          default:
+        }
+
+        if (_status != AnimationStatus.dismissed &&
+            _status != AnimationStatus.forward) {
+          // Animation is complete so set state accordingly
+          setState(() {
+            _cardIndex = _newCardIndex;
+            _dragState = DragState.idle;
+            _cardOffset = 0;
+          });
+
+          // Clean up all listeners including itself to ensure future
+          // animations behave as they should
+          _animation.removeListener(_animationListener);
+          _animationController.reset();
+          _animation.removeStatusListener(_animationStatusListener);
+
+          // Send any pending events to listeners. Done here as the animation
+          // has completed.
+          widget.controller?.notifyListeners(_pendingEvent!);
+
+          // check if we need to keep animated after this one is complete
+          if (_targetIndex != -1 && _cardIndex != _targetIndex) {
+            _animateToPosition(_targetIndex);
+          } else {
+            setState(() {
+              _targetIndex = -1;
+            });
+          }
+        }
+        break;
+      default:
+    }
+  }
+
+  /// Keep track of instantaneous card position offsets
   void _animationListener() {
     setState(() {
       _cardOffset = _animation.value;
     });
   }
-}
 
-enum DragState {
-  idle,
-  dragging,
-  animatingForward,
-  animatingBackward,
-  animatingToCancel,
+  /// Implementation used by [Controller] to goto the given page [targetPage]
+  /// without any animation.
+  void _jumpToPosition(int targetPage) {
+    setState(() {
+      _cardIndex = targetPage;
+    });
+  }
+
+  /// Implementation used by [Controller] to goto the given page [targetPage]
+  /// with an animation. This uses the existing animation settings including
+  /// the duration per scroll.
+  /// This function is called per page (ie multiple times if starting position
+  /// and [targetPage] are not adjacent pages.
+  void _animateToPosition(int targetPage) {
+    // Check if further animations are required to reach [targetPage]
+    if (targetPage == -1) {
+      return;
+    }
+    if (targetPage > _cardIndex && _cardIndex != widget.contentSize - 1) {
+      setState(() {
+        _dragState = DragState.animatingForward;
+        _targetIndex = targetPage;
+      });
+      _createAnimation();
+    } else if (targetPage < _cardIndex && _cardIndex != 0) {
+      setState(() {
+        _dragState = DragState.animatingBackward;
+        _targetIndex = targetPage;
+      });
+      _createAnimation();
+    }
+  }
 }

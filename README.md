@@ -20,6 +20,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Color> colors = <Color>[Colors.red, Colors.blue, Colors.green];
+    final Controller controller = Controller()
+      ..addListener(_handleCallbackEvents);
 
     return MaterialApp(
       home: Scaffold(
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
           // ^ the velocity threshold for smaller scrolls
           animationDuration: const Duration(milliseconds: 300),
           // ^ how long the animation will take
-          onScrollEvent: _handleCallbackEvent,
+          controller: controller,
           // ^ registering our own function to listen to page changes
           builder: (BuildContext context, int index) {
             return Container(
@@ -47,8 +49,12 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  void _handleCallbackEvent(ScrollEventType type, {required int currentIndex}) {
-  print("Scroll callback received with data: {type: $type, and index: $currentIndex}");
+  void _handleCallbackEvent(ScrollDirection direction, ScrollSuccess success,
+      {int? currentIndex}) {
+    print(
+        "Scroll callback received with data: "
+            "{direction: $direction, success: $success and index: ${currentIndex ?? 'not given'}}",
+    );
   }
 
 }
