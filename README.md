@@ -1,4 +1,6 @@
 ![Test](https://github.com/dmt195/tiktok-flutter-plugin/workflows/Test/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/dmt195/tiktok-flutter-plugin/branch/master/graph/badge.svg?token=N93Q8FI6YJ)](https://codecov.io/gh/dmt195/tiktok-flutter-plugin)
+
 
 # tiktoklikescroller
 
