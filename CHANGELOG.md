@@ -1,3 +1,7 @@
+## [0.2.1] - 14 June 2022
+
+* Fixing an issue with the readme file
+
 ## [0.2.0] - 14 February 2022
 
 * Refactoring callback methods and adding them to a wider Controller class. Breaking changes for anyone using callbacks.

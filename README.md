@@ -23,17 +23,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Color> colors = <Color>[Colors.red, Colors.blue, Colors.green];
     final Controller controller = Controller()
-      ..addListener(_handleCallbackEvents);
+      ...addListener((event) {
+        _handleCallbackEvent(event.direction, event.success);
+      });
 
     return MaterialApp(
       home: Scaffold(
         body: TikTokStyleFullPageScroller(
           contentSize: colors.length,
-          swipeThreshold: 0.2,
+          swipePositionThreshold: 0.2,
           // ^ the fraction of the screen needed to scroll
           swipeVelocityThreshold: 2000,
           // ^ the velocity threshold for smaller scrolls
-          animationDuration: const Duration(milliseconds: 300),
+          animationDuration: const Duration(milliseconds: 400),
           // ^ how long the animation will take
           controller: controller,
           // ^ registering our own function to listen to page changes
@@ -54,9 +56,7 @@ class MyApp extends StatelessWidget {
   void _handleCallbackEvent(ScrollDirection direction, ScrollSuccess success,
       {int? currentIndex}) {
     print(
-        "Scroll callback received with data: "
-            "{direction: $direction, success: $success and index: ${currentIndex ?? 'not given'}}",
-    );
+        "Scroll callback received with data: {direction: $direction, success: $success and index: ${currentIndex ?? 'not given'}}");
   }
 
 }
