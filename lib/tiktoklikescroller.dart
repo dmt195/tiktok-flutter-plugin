@@ -149,7 +149,9 @@ class _TikTokStyleFullPageScrollerState
                   if (_cardIndex == 0) {
                     // we are trying to swipe back beyond the first card, if callback exists, call it
                     _pendingEvent = ScrollEvent(ScrollDirection.BACKWARDS,
-                        ScrollSuccess.FAILED_END_OF_LIST, 0);
+                        ScrollSuccess.FAILED_END_OF_LIST, 0,
+                        percentWhenReleased:
+                            _cardOffset / _containerSize.height);
                     _state = DragState.animatingToCancel;
                   } else {
                     // if we are not on the first card and swiping back

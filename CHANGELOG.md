@@ -1,3 +1,8 @@
+## [0.2.6] - 18 November 2023
+
+* Adding a parameter to a listener to return the fraction of the card in a failed to transition state
+* Pub update 
+
 ## [0.2.5] - 14 June 2022
 
 * Upgrading SDK support to up to 4.0.0
