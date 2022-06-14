@@ -1,3 +1,7 @@
+## [0.2.2] - 14 June 2022
+
+* Tested against Flutter v3.0.2
+
 ## [0.2.1] - 14 June 2022
 
 * Fixing an issue with the readme file
