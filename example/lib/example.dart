@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tiktoklikescroller/tiktoklikescroller.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final List<Color> _colors = <Color>[
+    final List<Color> colors = <Color>[
       Colors.red,
       Colors.blue,
       Colors.green,
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       home: HomeWidget(
-        colors: _colors,
+        colors: colors,
       ),
     );
   }
@@ -22,11 +24,12 @@ class MyApp extends StatelessWidget {
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({
+    Key? key,
     required this.colors,
     this.testingController,
-  });
+  }) : super(key: key);
 
-// This is a parameter to support testing in this repo
+  // This is a parameter to support testing in this repo
   final Controller? testingController;
   final List<Color> colors;
 
@@ -77,15 +80,16 @@ class _HomeWidgetState extends State<HomeWidget> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
                   color: Colors.white.withAlpha(125),
                   child: Column(
                     children: [
-                      Text("--- Buttons For Testing Controller Functions ---"),
-                      SizedBox(
+                      const Text(
+                          "--- Buttons For Testing Controller Functions ---"),
+                      const SizedBox(
                         height: 8,
                       ),
-                      Text("Jump To:"),
+                      const Text("Jump To:"),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -104,7 +108,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 )
                                 .toList(),
                           ]),
-                      Text("Animate To:"),
+                      const Text("Animate To:"),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
