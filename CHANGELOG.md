@@ -1,3 +1,7 @@
+## [0.2.3] - 29 June 2022
+
+* Const, keys, and addressing linting issues
+
 ## [0.2.2] - 14 June 2022
 
 * Tested against Flutter v3.0.2
