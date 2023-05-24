@@ -1,3 +1,7 @@
+## [0.2.4] - 14 June 2022
+
+* Tested against Dart v3. Updating dependencies and example project.
+
 ## [0.2.2] - 14 June 2022
 
 * Tested against Flutter v3.0.2
