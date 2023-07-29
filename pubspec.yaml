@@ -1,6 +1,7 @@
 name: tiktoklikescroller
 description: A vertical fullscreen scroll implementation that snaps in place, similar to the TikTok app
 version: 0.2.5
+
 homepage: https://github.com/dmt195
 repository: https://github.com/dmt195/tiktok-flutter-plugin
 
