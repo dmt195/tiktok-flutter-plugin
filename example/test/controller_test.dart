@@ -39,6 +39,7 @@ void main() {
       expect(event.direction, ScrollDirection.FORWARD);
       expect(event.success, ScrollSuccess.FAILED_THRESHOLD_NOT_REACHED);
       expect(event.pageNo, null);
+      expect(event.scrollPosition, -50);
     });
 
     testWidgets(

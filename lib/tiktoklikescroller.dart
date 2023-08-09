@@ -168,7 +168,8 @@ class _TikTokStyleFullPageScrollerState
                           ? ScrollDirection.FORWARD
                           : ScrollDirection.BACKWARDS,
                       ScrollSuccess.FAILED_THRESHOLD_NOT_REACHED,
-                      null);
+                      null,
+                      scrollPosition: _cardOffset);
                   _state = DragState.animatingToCancel;
                 }
                 setState(() {
