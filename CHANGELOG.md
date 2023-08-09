@@ -1,3 +1,7 @@
+## [0.2.5] - 14 June 2022
+
+* Upgrading SDK support to up to 4.0.0
+
 ## [0.2.4] - 14 June 2022
 
 * Tested against Dart v3. Updating dependencies and example project.

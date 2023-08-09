@@ -166,7 +166,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.2.4"
+    version: "0.2.5"
   vector_math:
     dependency: transitive
     description:
@@ -176,4 +176,5 @@ packages:
     source: hosted
     version: "2.1.4"
 sdks:
-  dart: ">=3.0.0-0 <=3.0.2"
+  dart: ">=3.0.0-0 <4.0.0"
+
