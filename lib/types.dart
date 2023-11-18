@@ -35,10 +35,11 @@ class ScrollEvent {
   ScrollDirection direction;
   ScrollSuccess success;
   int? pageNo;
+  double? scrollPosition;
   double? percentWhenReleased;
 
   ScrollEvent(this.direction, this.success, this.pageNo,
-      {this.percentWhenReleased = 0.0});
+      {this.scrollPosition, this.percentWhenReleased = 0.0});
 
   @override
   toString() {
