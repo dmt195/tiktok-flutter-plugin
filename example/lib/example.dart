@@ -44,7 +44,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   initState() {
     controller = widget.testingController ?? Controller()
       ..addListener((event) {
-        _handleCallbackEvent(event.direction, event.success);
+        _handleCallbackEvent(event);
       });
 
     // controller.jumpToPosition(4);
@@ -138,9 +138,11 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  void _handleCallbackEvent(ScrollDirection direction, ScrollSuccess success,
-      {int? currentIndex}) {
+  void _handleCallbackEvent(ScrollEvent event) {
     print(
-        "Scroll callback received with data: {direction: $direction, success: $success and index: ${currentIndex ?? 'not given'}}");
+        "Scroll callback received with data: {direction: ${event.direction}, success: ${event.success} and page: ${event.pageNo ?? 'not given'}}");
+    if (event.percentWhenReleased != null) {
+      print("Percent when released: ${event.percentWhenReleased}");
+    }
   }
 }

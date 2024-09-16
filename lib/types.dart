@@ -35,12 +35,15 @@ class ScrollEvent {
   ScrollDirection direction;
   ScrollSuccess success;
   int? pageNo;
+  double? scrollPosition;
+  double? percentWhenReleased;
 
-  ScrollEvent(this.direction, this.success, this.pageNo);
+  ScrollEvent(this.direction, this.success, this.pageNo,
+      {this.scrollPosition, this.percentWhenReleased = 0.0});
 
   @override
   toString() {
-    return "ScrollEvent: Direction: $direction, Success: $success, Page: ${pageNo ?? "Not given"}";
+    return "ScrollEvent: Direction: $direction, Success: $success, Page: ${pageNo ?? "Not given"}, Percent when released: $percentWhenReleased";
   }
 
   @override
