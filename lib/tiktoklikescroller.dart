@@ -75,7 +75,7 @@ class _TikTokStyleFullPageScrollerState
       vsync: this,
       duration: widget.animationDuration,
     );
-    _cardIndex = 0;
+    _cardIndex = widget.controller?.getScrollPosition() ?? 0;
     _dragState = DragState.idle;
 
     if (widget.controller != null) {

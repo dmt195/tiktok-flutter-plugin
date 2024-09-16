@@ -10,8 +10,12 @@ import 'package:tiktoklikescroller/types.dart';
 /// of the Scroller, use the [attach] method.
 class Controller {
   List<ScrollEventCallback> _listeners = [];
-  int _page = 0;
+  late int _page;
   StreamController<ControllerFeedback>? feedback;
+
+  Controller({
+    int? page,
+  }) : _page = page ?? 0;
 
   /// Returns the scroll position as tracked by the controller
   int getScrollPosition() {
