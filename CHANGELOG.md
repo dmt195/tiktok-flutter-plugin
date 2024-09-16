@@ -1,3 +1,7 @@
+## [0.2.8] - 16 September 2024
+
+* Merging PR#26 from sommestad to provide a starting index
+
 ## [0.2.6] - 18 November 2023
 
 * Adding a parameter to a listener to return the fraction of the card in a failed to transition state
